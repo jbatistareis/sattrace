@@ -14,7 +14,7 @@ module.exports = {
     },
     new: (tle) => {
         return postgresDatabase.insert(
-            'insert into tle (name, line1, line2, category) values ($1, $2, $3, $4)',
+            'insert into tle (name, line1, line2, category) values ($1, $2, $3, $4) returning id',
             [tle.name, tle.line1, tle.line2, tle.category]);
     },
     update: (tle) => postgresDatabase.update(

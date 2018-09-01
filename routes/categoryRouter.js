@@ -25,7 +25,7 @@ router.post('/', function (req, res, next) {
 // delete
 router.delete('/:id', function (req, res, next) {
   categoryModel.delete(req.params.id)
-    .then((result) => res.status(200))
+    .then((result) => res.sendStatus(200))
     .catch((error) => categoryModel.parseError(res, error));
 });
 

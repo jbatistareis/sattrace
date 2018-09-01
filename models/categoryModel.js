@@ -4,12 +4,12 @@ module.exports = {
     parseError: (res, error) => postgresDatabase.parseError(res, error),
     findAll: () => {
         return postgresDatabase.query(
-            'select * from category order by name',
+            'select * from category where id <> 1 order by name',
             []);
     },
     new: (category) => {
         return postgresDatabase.insert(
-            'insert into category (name, description) values ($1, $2)',
+            'insert into category (name, description) values ($1, $2) returning id',
             [category.name, category.description]);
     },
     update: (category) => postgresDatabase.update(

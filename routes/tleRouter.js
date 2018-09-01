@@ -1,11 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
-var satelliteModel = require('../models/satelliteModel.js');
+var satelliteModel = require('../models/tleModel.js');
 
-// list all
+// find all
 router.get('/', function (req, res, next) {
   satelliteModel.findAll()
+    .then((result) => res.json(result))
+    .catch((error) => satelliteModel.parseError(res, error));
+});
+
+// find by category
+router.get('/:id', function (req, res, next) {
+  satelliteModel.findByCategory(req.params.id)
     .then((result) => res.json(result))
     .catch((error) => satelliteModel.parseError(res, error));
 });
@@ -25,7 +32,7 @@ router.post('/', function (req, res, next) {
 // delete
 router.delete('/:id', function (req, res, next) {
   satelliteModel.delete(req.params.id)
-    .then((result) => res.status(200))
+    .then((result) => res.sendStatus(200))
     .catch((error) => satelliteModel.parseError(res, error));
 });
 
@@ -46,8 +53,8 @@ router.get('/export/category/:id', function (req, res, next) {
   // TODO
 });
 
-// export stelites list
-router.get('/export/satellites/:id', function (req, res, next) {
+// export tle list
+router.get('/export/list/:id', function (req, res, next) {
   // TODO
 });
 
