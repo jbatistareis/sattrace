@@ -9,14 +9,16 @@ export class SatelliteMapComponent implements OnInit {
 
   private startDate: string = '';
   private endDate: string = '';
-  private tleList: any[] = [];
+  private selectedTle: any[] = [];
 
   @Input()
   set display(tles: any[]) {
-    this.tleList = tles;
+    this.selectedTle = tles;
   }
 
   constructor() { }
+
+  ngOnInit() { }
 
   setStartDate(date: string) {
 
@@ -27,10 +29,12 @@ export class SatelliteMapComponent implements OnInit {
   }
 
   toggleTle(tle: any) {
+    let index = this.selectedTle.indexOf(this.selectedTle.filter((item) => { return item.name == tle.name })[0]);
 
-  }
-
-  ngOnInit() {
+    if (index > -1)
+      this.selectedTle.slice(index, 1);
+    else
+      this.selectedTle.push(tle);
   }
 
 }
