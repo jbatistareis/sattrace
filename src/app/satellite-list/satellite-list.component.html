@@ -1,0 +1,38 @@
+<div class="card">
+  <div class="card-header">
+    <form>
+      <div class="row">
+        <div class="col-9">
+          <select class="custom-select custom-select-sm" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+            <option *ngFor="let category of categoryList">{{category.name}}</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v"></i>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item">New category</a>
+              <a class="dropdown-item">Edit category</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item">Export satellites</a>
+              <a class="dropdown-item">Import satellites</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item">New satellite</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item" *ngFor="let tle of tleList">
+      {{tle.name}}
+      <div class="btn-group btn-group-sm pull-right" role="group">
+        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-edit"></i></button>
+        <button type="button" class="btn btn-default btn-sm"><i class="fa fa-eye" (click)="toggleTle(tle)"></i></button>
+      </div>
+    </li>
+  </ul>
+</div>

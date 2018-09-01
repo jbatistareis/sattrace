@@ -1,16 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
+import { SatelliteListComponent } from './satellite-list/satellite-list.component';
+import { SatelliteMapComponent } from './satellite-map/satellite-map.component';
+import { RootComponent } from './root/root.component';
 
 @NgModule({
   declarations: [
-    AppComponent
-  ],
+    SatelliteListComponent,
+    SatelliteMapComponent,
+    RootComponent],
   imports: [
     BrowserModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [RootComponent]
 })
 export class AppModule { }
