@@ -1,3 +1,9 @@
 {
-	"url": ""
+	"host": "localhost",
+	"port": 5432,
+	"database": "my-database-name",
+	"user": "user-name",
+	"password": "user-password",
+	"min": 0,
+	"max": 8
 }
