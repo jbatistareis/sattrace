@@ -28,8 +28,8 @@ router.post('/:id/track', function(req, res, next) {
   // TODO
 });
 
-// search
-router.post('/search', function(req, res, next) {
+// find
+router.post('/find', function(req, res, next) {
   // TODO
 });
 

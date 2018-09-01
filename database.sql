@@ -5,7 +5,7 @@
 -- Dumped from database version 9.6.6
 -- Dumped by pg_dump version 10.4
 
--- Started on 2018-09-01 08:42:38
+-- Started on 2018-09-01 10:07:41
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -99,7 +99,7 @@ ALTER SEQUENCE public.category_id_seq OWNED BY public.category.id;
 
 
 --
--- TOC entry 188 (class 1259 OID 17741)
+-- TOC entry 188 (class 1259 OID 17758)
 -- Name: tle; Type: TABLE; Schema: public; Owner: satview
 --
 
@@ -115,7 +115,7 @@ CREATE TABLE public.tle (
 ALTER TABLE public.tle OWNER TO satview;
 
 --
--- TOC entry 187 (class 1259 OID 17739)
+-- TOC entry 187 (class 1259 OID 17756)
 -- Name: tle_id_seq; Type: SEQUENCE; Schema: public; Owner: satview
 --
 
@@ -147,7 +147,7 @@ ALTER TABLE ONLY public.category ALTER COLUMN id SET DEFAULT nextval('public.cat
 
 
 --
--- TOC entry 2012 (class 2604 OID 17744)
+-- TOC entry 2012 (class 2604 OID 17761)
 -- Name: tle id; Type: DEFAULT; Schema: public; Owner: satview
 --
 
@@ -164,7 +164,7 @@ INSERT INTO public.category (id, name, description) VALUES (1, 'No category', NU
 
 
 --
--- TOC entry 2143 (class 0 OID 17741)
+-- TOC entry 2143 (class 0 OID 17758)
 -- Dependencies: 188
 -- Data for Name: tle; Type: TABLE DATA; Schema: public; Owner: satview
 --
@@ -199,7 +199,7 @@ ALTER TABLE ONLY public.category
 
 
 --
--- TOC entry 2019 (class 2606 OID 17746)
+-- TOC entry 2019 (class 2606 OID 17763)
 -- Name: tle tle_pkey; Type: CONSTRAINT; Schema: public; Owner: satview
 --
 
@@ -217,7 +217,7 @@ ALTER TABLE ONLY public.category
 
 
 --
--- TOC entry 2021 (class 2606 OID 17748)
+-- TOC entry 2021 (class 2606 OID 17765)
 -- Name: tle unq_tle; Type: CONSTRAINT; Schema: public; Owner: satview
 --
 
@@ -226,15 +226,15 @@ ALTER TABLE ONLY public.tle
 
 
 --
--- TOC entry 2022 (class 2606 OID 17749)
+-- TOC entry 2022 (class 2606 OID 17766)
 -- Name: tle fk_category; Type: FK CONSTRAINT; Schema: public; Owner: satview
 --
 
 ALTER TABLE ONLY public.tle
-    ADD CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES public.category(id) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES public.category(id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
--- Completed on 2018-09-01 08:42:38
+-- Completed on 2018-09-01 10:07:41
 
 --
 -- PostgreSQL database dump complete
