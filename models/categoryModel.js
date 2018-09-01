@@ -1,6 +1,7 @@
 var postgresDatabase = require('../database/postgresDatabase.js');
 
 module.exports = {
+    parseError: (res, error) => postgresDatabase.parseError(res, error),
     findAll: () => {
         return postgresDatabase.query(
             'select * from category order by name',

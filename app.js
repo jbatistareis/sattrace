@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 
 var satelliteRouter = require('./routes/satelliteRouter.js');
+var categoryRouter = require('./routes/categoryRouter.js');
 
 var app = express();
 app.use(compression());
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // routes
 app.use('/satellite', satelliteRouter);
+app.use('/category', categoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

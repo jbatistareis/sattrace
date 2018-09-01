@@ -1,6 +1,7 @@
 var postgresDatabase = require('../database/postgresDatabase.js');
 
 module.exports = {
+    parseError: (res, error) => postgresDatabase.parseError(res, error),
     findAll: () => {
         return postgresDatabase.query(
             'select * from tle order by name',
@@ -28,5 +29,8 @@ module.exports = {
             'select * from tle where name like $1 and line1 like $2 and line2 like $3 order by name',
             [(tle.name || '') + '%', (tle.line1 || '') + '%', (tle.line2 || '') + '%']
         )
+    },
+    track: () => {
+        // TODO
     }
 };
