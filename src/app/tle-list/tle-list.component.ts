@@ -28,6 +28,7 @@ export class TleListComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
+    this.getCategories();
     this.loadCategoryData(this.noCategory);
 
     $('[data-toggle=popover]').popover();
@@ -43,7 +44,7 @@ export class TleListComponent implements OnInit {
   getCategories() {
     this.http.get('category/').subscribe(
       (response) => { this.categoryList = response as Array<Category>; },
-      (error) => console.log(error)
+      (error) => this.showError(error)
     );
   }
 
@@ -55,7 +56,7 @@ export class TleListComponent implements OnInit {
           this.getCategories();
           this.loadCategoryData(this.noCategory);
         },
-        (error) => console.log(error)
+        (error) => this.showError(error)
       );
 
     this.confirmDelete = !this.confirmDelete;
@@ -68,7 +69,7 @@ export class TleListComponent implements OnInit {
         this.getCategories();
         form.reset();
       },
-      (error) => console.log(error)
+      (error) => this.showError(error)
     );
   }
 
@@ -89,7 +90,7 @@ export class TleListComponent implements OnInit {
           this.searchResults = undefined;
           this.tleList = response as Array<TLE>;
         },
-        (error) => console.log(error)
+        (error) => this.showError(error)
       );
   }
 
@@ -100,7 +101,7 @@ export class TleListComponent implements OnInit {
           $('div#tleEditModal').modal('hide');
           this.getTle(this.formCategory.id);
         },
-        (error) => console.log(error)
+        (error) => this.showError(error)
       );
 
     this.confirmDelete = !this.confirmDelete;
@@ -115,7 +116,7 @@ export class TleListComponent implements OnInit {
         this.getTle(this.formCategory.id);
         form.reset();
       },
-      (error) => console.log(error)
+      (error) => this.showError(error)
     );
   }
 
@@ -135,8 +136,16 @@ export class TleListComponent implements OnInit {
           this.category = this.searchResults;
           this.tleList = response as Array<TLE>;
         },
-        (error) => console.log(error)
+        (error) => this.showError(error)
       );
+  }
+
+  // util
+  showError(error) {
+    console.log(error);
+    $('span#errorModalTitle').text(error.status + ' ' + error.statusText);
+    $('div#errorModalBody').html(error.error);
+    $('div#errorModal').modal('show');
   }
 
 }
