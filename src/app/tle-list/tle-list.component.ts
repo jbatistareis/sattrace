@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+declare var $: any;
 
 @Component({
   selector: 'app-tle-list',
@@ -19,11 +20,17 @@ export class TleListComponent implements OnInit {
   public formTle: any = {};
   public search: string;
 
+  private confirmDelete: boolean = false;
+
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.getCategories();
     this.getTle(1);
+
+    $('[data-toggle=popover]').popover();
+    $('div#categoryEditModal').on('show.bs.modal', (event) => { this.confirmDelete = false; });
+    $('div#tleEditModal').on('show.bs.modal', (event) => { this.confirmDelete = false; });
   }
 
   // categories
@@ -39,10 +46,16 @@ export class TleListComponent implements OnInit {
   }
 
   deleteCategory() {
-    this.http.delete('category/' + this.formCategory.id).subscribe(
-      (response) => this.getCategories(),
-      (error) => console.log(error)
-    );
+    if (this.confirmDelete)
+      this.http.delete('category/' + this.formCategory.id).subscribe(
+        (response) => {
+          $('div#categoryEditModal').modal('hide');
+          this.getCategories();
+        },
+        (error) => console.log(error)
+      );
+
+    this.confirmDelete = !this.confirmDelete;
   }
 
   saveCategory(form) {
@@ -77,10 +90,16 @@ export class TleListComponent implements OnInit {
   }
 
   deleteTle() {
-    this.http.delete('tle/' + this.formTle.id).subscribe(
-      (response) => this.getTle(this.formCategory.id),
-      (error) => console.log(error)
-    );
+    if (this.confirmDelete)
+      this.http.delete('tle/' + this.formTle.id).subscribe(
+        (response) => {
+          $('div#tleEditModal').modal('hide');
+          this.getTle(this.formCategory.id);
+        },
+        (error) => console.log(error)
+      );
+
+    this.confirmDelete = !this.confirmDelete;
   }
 
   saveTle(form) {
