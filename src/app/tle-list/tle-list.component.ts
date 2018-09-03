@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Category } from './category';
+import { TLE } from './tle';
+
 declare var $: any;
 
 @Component({
@@ -9,15 +12,15 @@ declare var $: any;
 })
 export class TleListComponent implements OnInit {
 
-  public tleList: any[] = [];
-  public categoryList: any[] = [];
-  public noCategory: any = { id: 1, name: "No category" };
-  public searchResults: any;
+  public tleList: TLE[] = [];
+  public categoryList: Category[] = [];
+  public noCategory: Category = new Category(1, 'No category');
+  public searchResults: Category = undefined;
 
-  public selectedTle: any[] = [];
-  public category: any = this.noCategory;
-  public formCategory: any = {};
-  public formTle: any = {};
+  public selectedTle: TLE[] = [];
+  public category: Category = this.noCategory;
+  public formCategory: Category = new Category();
+  public formTle: TLE = new TLE();
   public search: string;
 
   private confirmDelete: boolean = false;
@@ -25,8 +28,7 @@ export class TleListComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.getCategories();
-    this.getTle(1);
+    this.loadCategoryData(this.noCategory);
 
     $('[data-toggle=popover]').popover();
     $('div#categoryEditModal').on('show.bs.modal', (event) => { this.confirmDelete = false; });
@@ -35,12 +37,12 @@ export class TleListComponent implements OnInit {
 
   // categories
   newCategory() {
-    this.formCategory = { name: '', description: '' }
+    this.formCategory = new Category(undefined, '', undefined);
   }
 
   getCategories() {
     this.http.get('category/').subscribe(
-      (response) => { this.categoryList = response as Array<any> },
+      (response) => { this.categoryList = response as Array<Category>; },
       (error) => console.log(error)
     );
   }
@@ -51,6 +53,7 @@ export class TleListComponent implements OnInit {
         (response) => {
           $('div#categoryEditModal').modal('hide');
           this.getCategories();
+          this.loadCategoryData(this.noCategory);
         },
         (error) => console.log(error)
       );
@@ -61,6 +64,7 @@ export class TleListComponent implements OnInit {
   saveCategory(form) {
     this.http.post('category/', this.formCategory).subscribe(
       (response) => {
+        $('div#categoryEditModal').modal('hide');
         this.getCategories();
         form.reset();
       },
@@ -68,14 +72,14 @@ export class TleListComponent implements OnInit {
     );
   }
 
-  loadCategoryData(category: any) {
+  loadCategoryData(category: Category) {
     this.getTle(category.id);
     this.formCategory = category;
   }
 
   // tle
   newTle() {
-    this.formTle = { name: '', line1: '', line2: '', category: 1 };
+    this.formTle = new TLE();
   }
 
   getTle(categoryId: number) {
@@ -83,7 +87,7 @@ export class TleListComponent implements OnInit {
       this.http.get('tle/' + categoryId).subscribe(
         (response) => {
           this.searchResults = undefined;
-          this.tleList = response as Array<any>;
+          this.tleList = response as Array<TLE>;
         },
         (error) => console.log(error)
       );
@@ -104,8 +108,10 @@ export class TleListComponent implements OnInit {
 
   saveTle(form) {
     this.formTle.category = this.formCategory.id;
+
     this.http.post('tle/', this.formTle).subscribe(
       (response) => {
+        $('div#tleEditModal').modal('hide');
         this.getTle(this.formCategory.id);
         form.reset();
       },
@@ -113,7 +119,7 @@ export class TleListComponent implements OnInit {
     );
   }
 
-  toggleTle(tle: any) {
+  toggleTle(tle: TLE) {
     let index = this.selectedTle.indexOf(this.selectedTle.filter((item) => { return item.name == tle.name })[0]);
     if (index >= 0)
       this.selectedTle.splice(index, 1);
@@ -123,11 +129,11 @@ export class TleListComponent implements OnInit {
 
   execSearch(value: string) {
     if (value.length > 0)
-      this.http.post('search/', { name: value }).subscribe(
+      this.http.post('tle/search/', { name: value }).subscribe(
         (response) => {
-          this.searchResults = { id: 0, name: 'Search: ' + '"' + value + '"' };
+          this.searchResults = new Category(0, 'Search: ' + '"' + value + '"', undefined);
           this.category = this.searchResults;
-          this.tleList = response as Array<any>;
+          this.tleList = response as Array<TLE>;
         },
         (error) => console.log(error)
       );

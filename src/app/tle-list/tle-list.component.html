@@ -38,16 +38,16 @@
     <li class="list-group-item" *ngIf="tleList.length === 0">
       <i>No records</i>
     </li>
-    <li class="list-group-item" *ngFor="let item of tleList">
+    <li class="list-group-item clearfix" *ngFor="let item of tleList">
       {{item.name}}
-      <div class="btn-group btn-group-sm pull-right" role="group">
+      <div class="btn-group btn-group-sm float-right" role="group">
         <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static"
           (click)="formTle = item"><i class="fas fa-edit"></i></button>
         <button type="button" class="btn btn-default btn-sm" (click)="toggleTle(item)"><i class="fas fa-eye"></i></button>
       </div>
     </li>
   </ul>
-  <div class="card-footer text-muted">
+  <div class="card-footer text-muted border-top-0">
     <form #searchForm="ngForm" (ngSubmit)="execSearch(search.value)">
       <div class="row">
         <div class="col-10">
@@ -73,14 +73,14 @@
       </div>
       <form #catForm="ngForm" (ngSubmit)="saveCategory(catForm.form)">
         <div class="modal-body">
-          <div class="form-group row">
+          <div class="form-group form-row">
             <label for="catName" class="col-sm-3 col-form-label">Name</label>
             <div class="col-sm-9">
               <input type="text" maxlength="20" id="catName" name="catName" #catName="ngModel" [(ngModel)]="formCategory.name" [class]="(catName.invalid && (catName.dirty || catName.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
                 required/>
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group form-row">
             <label for="description" class="col-sm-3 col-form-label">Description</label>
             <div class="col-sm-9">
               <textarea rows="3" maxlength="280" class="form-control form-control-sm unresizable" id="description" name="description" [(ngModel)]="formCategory.description"></textarea>
@@ -111,32 +111,35 @@
       </div>
       <form #tleForm="ngForm" (ngSubmit)="saveTle(tleForm.form)">
         <div class="modal-body">
-          <div class="form-group row">
-            <label for="tleName" class="col-sm-2 col-form-label">Name</label>
+          <div class="form-group form-row">
+            <label for="tleName" class="col-sm-1 col-form-label">Name</label>
             <div class="col-sm-5">
-              <input type="text" maxlength="24" id="tleName" name="tleName" #tleName="ngModel" [(ngModel)]="formTle.name" [class]="(tleName.invalid && (tleName.dirty || tleName.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+              <input type="text" maxlength="24" id="tleName" name="tleName" placeholder="AAAAAAAAAAAAAAAAAAAAAAAA" #tleName="ngModel" [(ngModel)]="formTle.name"
+                [class]="(tleName.invalid && (tleName.dirty || tleName.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
                 required>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="line1" class="col-sm-2 col-form-label">Line 1</label>
-            <div class="col-sm-10">
-              <input type="text" minlength="69" maxlength="69" id="line1" name="line1" #line1="ngModel" [(ngModel)]="formTle.line1" [class]="(line1.invalid && (line1.dirty || line1.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+          <div class="form-group form-row">
+            <label for="line1" class="col-sm-1 col-form-label">Line 1</label>
+            <div class="col-sm-11">
+              <input type="text" minlength="69" maxlength="69" id="line1" name="line1" placeholder="1 NNNNNU NNNNNAAA NNNNN.NNNNNNNN +.NNNNNNNN +NNNNN-N +NNNNN-N N NNNNN"
+                #line1="ngModel" [(ngModel)]="formTle.line1" [class]="(line1.invalid && (line1.dirty || line1.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
                 required>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="line2" class="col-sm-2 col-form-label">Line 2</label>
-            <div class="col-sm-10">
-              <input type="text" minlength="69" maxlength="69" id="line2" name="line2" #line2="ngModel" [(ngModel)]="formTle.line2" [class]="(line2.invalid && (line2.dirty || line2.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+          <div class="form-group form-row">
+            <label for="line2" class="col-sm-1 col-form-label">Line 2</label>
+            <div class="col-sm-11">
+              <input type="text" minlength="69" maxlength="69" id="line2" name="line2" placeholder="2 NNNNN NNN.NNNN NNN.NNNN NNNNNNN NNN.NNNN NNN.NNNN NN.NNNNNNNNNNNNNN"
+                #line2="ngModel" [(ngModel)]="formTle.line2" [class]="(line2.invalid && (line2.dirty || line2.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
                 required>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary btn-sm" [disabled]="tleForm.form.status === 'INVALID'"><i class="fas fa-save"></i>&nbsp;Save</button>
-          <button type="button" class="btn btn-danger btn-sm" [disabled]="formTle.id === undefined" (click)="deleteTle()"><i
-              class="fas fa-trash"></i>&nbsp;Delete</button>
+          <button type="button" class="btn btn-danger btn-sm" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Click again to confirm."
+            [disabled]="formTle.id === undefined" (click)="deleteTle()"><i class="fas fa-trash"></i>&nbsp;Delete</button>
           <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
         </div>
       </form>
