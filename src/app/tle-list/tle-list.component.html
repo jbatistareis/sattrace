@@ -1,0 +1,144 @@
+<!-- main list -->
+<div class="card">
+  <div class="card-header">
+    <form>
+      <div class="row">
+        <div class="col-10">
+          <select class="custom-select custom-select-sm" name="category" [(ngModel)]="category" (change)="loadCategoryData(category)">
+            <option [ngValue]="searchResults" *ngIf="searchResults">{{searchResults.name}}</option>
+            <option [ngValue]="noCategory">No category</option>
+            <option *ngFor="let item of categoryList" [ngValue]="item">{{item.name}}</option>
+          </select>
+        </div>
+        <div class="col-2">
+          <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v"></i>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" (click)="newCategory()">New
+                category
+              </a>
+              <a class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" [hidden]="category.id == 1">
+                Edit category
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item">Export TLE data</a>
+              <a class="dropdown-item">Import TLE data</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static" (click)="newTle()">New
+                TLE data</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item" *ngIf="tleList.length === 0">
+      <i>No records</i>
+    </li>
+    <li class="list-group-item" *ngFor="let item of tleList">
+      {{item.name}}
+      <div class="btn-group btn-group-sm pull-right" role="group">
+        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static"
+          (click)="formTle = item"><i class="fa fa-edit"></i></button>
+        <button type="button" class="btn btn-default btn-sm" (click)="toggleTle(item)"><i class="fa fa-eye"></i></button>
+      </div>
+    </li>
+  </ul>
+  <div class="card-footer text-muted">
+    <form #searchForm="ngForm" (ngSubmit)="execSearch(search.value)">
+      <div class="row">
+        <div class="col-10">
+          <input type="text" maxlength="24" placeholder="Search TLE names" class="form-control form-control-sm" #search>
+        </div>
+        <div class="col-2">
+          <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- category modal -->
+<div class="modal fade" id="categoryEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fa fa-book"></i>&nbsp;Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #catForm="ngForm" (ngSubmit)="saveCategory(catForm.form)">
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="catName" class="col-sm-3 col-form-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" maxlength="20" id="catName" name="catName" #catName="ngModel" [(ngModel)]="formCategory.name" [class]="(catName.invalid && (catName.dirty || catName.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+                required/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="description" class="col-sm-3 col-form-label">Description</label>
+            <div class="col-sm-9">
+              <textarea rows="3" maxlength="280" class="form-control form-control-sm unresizable" id="description" name="description" [(ngModel)]="formCategory.description"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="catForm.form.status === 'INVALID'"><i class="fa fa-save"></i>&nbsp;Save</button>
+          <button type="button" class="btn btn-danger btn-sm" [disabled]="(category.id === undefined) || (category.id === 1)" (click)="deleteCategory()">
+            <i class="fa fa-trash"></i>&nbsp;Delete</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- tle modal -->
+<div class="modal fade" id="tleEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fa fa-bookmark"></i>&nbsp;TLE data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #tleForm="ngForm" (ngSubmit)="saveTle(tleForm.form)">
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="tleName" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-5">
+              <input type="text" maxlength="24" id="tleName" name="tleName" #tleName="ngModel" [(ngModel)]="formTle.name" [class]="(tleName.invalid && (tleName.dirty || tleName.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+                required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="line1" class="col-sm-2 col-form-label">Line 1</label>
+            <div class="col-sm-10">
+              <input type="text" minlength="69" maxlength="69" id="line1" name="line1" #line1="ngModel" [(ngModel)]="formTle.line1" [class]="(line1.invalid && (line1.dirty || line1.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+                required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="line2" class="col-sm-2 col-form-label">Line 2</label>
+            <div class="col-sm-10">
+              <input type="text" minlength="69" maxlength="69" id="line2" name="line2" #line2="ngModel" [(ngModel)]="formTle.line2" [class]="(line2.invalid && (line2.dirty || line2.touched)) ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'"
+                required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="tleForm.form.status === 'INVALID'"><i class="fa fa-save"></i>&nbsp;Save</button>
+          <button type="button" class="btn btn-danger btn-sm" [disabled]="formTle.id === undefined" (click)="deleteTle()"><i
+              class="fa fa-trash"></i>&nbsp;Delete</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

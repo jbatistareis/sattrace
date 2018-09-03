@@ -2,20 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-satellite-list',
-  templateUrl: './satellite-list.component.html',
-  styleUrls: ['./satellite-list.component.css']
+  selector: 'app-tle-list',
+  templateUrl: './tle-list.component.html',
+  styleUrls: ['./tle-list.component.css']
 })
-export class SatelliteListComponent implements OnInit {
+export class TleListComponent implements OnInit {
 
   public tleList: any[] = [];
   public categoryList: any[] = [];
   public noCategory: any = { id: 1, name: "No category" };
+  public searchResults: any;
 
   public selectedTle: any[] = [];
   public category: any = this.noCategory;
   public formCategory: any = {};
   public formTle: any = {};
+  public search: string;
 
   constructor(private http: HttpClient) { }
 
@@ -64,10 +66,14 @@ export class SatelliteListComponent implements OnInit {
   }
 
   getTle(categoryId: number) {
-    this.http.get('tle/' + categoryId).subscribe(
-      (response) => { this.tleList = response as Array<any> },
-      (error) => console.log(error)
-    );
+    if (categoryId > 0)
+      this.http.get('tle/' + categoryId).subscribe(
+        (response) => {
+          this.searchResults = undefined;
+          this.tleList = response as Array<any>;
+        },
+        (error) => console.log(error)
+      );
   }
 
   deleteTle() {
@@ -94,6 +100,18 @@ export class SatelliteListComponent implements OnInit {
       this.selectedTle.splice(index, 1);
     else
       this.selectedTle.push(tle);
+  }
+
+  execSearch(value: string) {
+    if (value.length > 0)
+      this.http.post('search/', { name: value }).subscribe(
+        (response) => {
+          this.searchResults = { id: 0, name: 'Search: ' + '"' + value + '"' };
+          this.category = this.searchResults;
+          this.tleList = response as Array<any>;
+        },
+        (error) => console.log(error)
+      );
   }
 
 }

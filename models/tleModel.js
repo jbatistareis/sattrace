@@ -24,10 +24,10 @@ module.exports = {
         'delete from tle where id = $1',
         [tleId]
     ),
-    find: (tle) => {
+    search: (tle) => {
         return postgresDatabase.query(
-            'select * from tle where name like $1 and line1 like $2 and line2 like $3 order by name',
-            [(tle.name || '') + '%', (tle.line1 || '') + '%', (tle.line2 || '') + '%']
+            'select * from tle where name like $1 order by name',
+            ['%' + tle.name + '%']
         )
     },
     track: () => {
