@@ -12,6 +12,11 @@ module.exports = {
             'select * from tle where category = $1 order by name',
             [categoryId]);
     },
+    findById: (tleId) => {
+        return postgresDatabase.query(
+            'select * from tle where id in($1) order by name',
+            [tleId]);
+    },
     new: (tle) => {
         return postgresDatabase.insert(
             'insert into tle (name, line1, line2, category) values ($1, $2, $3, $4) returning id',
@@ -29,8 +34,5 @@ module.exports = {
             'select * from tle where name like $1 order by name',
             ['%' + tle.name + '%']
         )
-    },
-    track: () => {
-        // TODO
     }
 };

@@ -11,8 +11,15 @@ router.get('/', function (req, res, next) {
 });
 
 // find by category
-router.get('/:id', function (req, res, next) {
+router.get('/category/:id', function (req, res, next) {
   tleModel.findByCategory(req.params.id)
+    .then((result) => res.json(result))
+    .catch((error) => tleModel.parseError(res, error));
+});
+
+// find by id
+router.get('/', function (req, res, next) {
+  tleModel.findById(req.query.id)
     .then((result) => res.json(result))
     .catch((error) => tleModel.parseError(res, error));
 });
@@ -41,11 +48,6 @@ router.post('/search', function (req, res, next) {
   tleModel.search(req.body)
     .then((result) => res.json(result))
     .catch((error) => tleModel.parseError(res, error));
-});
-
-// track
-router.post('/:id/track', function (req, res, next) {
-  // TODO
 });
 
 // export category

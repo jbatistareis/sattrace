@@ -85,7 +85,7 @@ export class TleListComponent implements OnInit {
 
   getTle(categoryId: number) {
     if (categoryId > 0)
-      this.http.get('tle/' + categoryId).subscribe(
+      this.http.get('tle/category/' + categoryId).subscribe(
         (response) => {
           this.searchResults = undefined;
           this.tleList = response as Array<TLE>;
