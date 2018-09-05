@@ -77,11 +77,14 @@ export class SatelliteMapComponent implements OnInit {
       this.map.removeLayer(this.mapDataList[index].marker);
       this.mapDataList.splice(index, 1);
     } else {
+      let randomColor = 'rgb(' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ')';
+
       let mapData = new MapData(
         tle.name,
+        randomColor,
         satellite.twoline2satrec(tle.line1, tle.line2),
         L.marker([0, 0], { title: tle.name, opacity: 0.0, icon: this.markerIcon }).addTo(this.map),
-        new L.Wrapped.Polyline([], { color: 'grey' }).addTo(this.map));
+        new L.Wrapped.Polyline([], { color: randomColor }).addTo(this.map));
 
       this.setSatellitePath(mapData);
       this.mapDataList.push(mapData);
