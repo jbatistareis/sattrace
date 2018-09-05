@@ -60,10 +60,9 @@ export class SatelliteMapComponent implements OnInit {
     // update satellites every second
     setInterval(
       () => {
-        let momentDate = moment();
-        let date = momentDate.toDate();
-
+        let date = new Date();
         let gmst = satellite.gstime(date);
+
         for (let i = 0; i < this.mapDataList.length; i++)
           this.setSatellitePosition(this.mapDataList[i], date, gmst);
       },
@@ -81,8 +80,8 @@ export class SatelliteMapComponent implements OnInit {
       let mapData = new MapData(
         tle.name,
         satellite.twoline2satrec(tle.line1, tle.line2),
-        L.marker([0, 0], { opacity: 0.0, icon: this.markerIcon }).addTo(this.map),
-        L.polyline([], { color: 'grey' }).addTo(this.map));
+        L.marker([0, 0], { title: tle.name, opacity: 0.0, icon: this.markerIcon }).addTo(this.map),
+        new L.Wrapped.Polyline([], { color: 'grey' }).addTo(this.map));
 
       this.setSatellitePath(mapData);
       this.mapDataList.push(mapData);
@@ -101,8 +100,8 @@ export class SatelliteMapComponent implements OnInit {
   setSatellitePath(mapData: MapData) {
     let pathDate = moment();
 
-    for (let i = 0; i < 100; i++) {
-      pathDate.add(i, 's');
+    for (let i = 0; i < 120; i++) {
+      pathDate.add(i, 'second');
       let convDate = pathDate.toDate();
 
       let positionAndVelocity = satellite.propagate(mapData.orbitData, convDate);

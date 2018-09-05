@@ -16,17 +16,17 @@
               <i class="fas fa-ellipsis-v"></i>
             </button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" (click)="newCategory()">New
+              <a href="#" class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" (click)="newCategory()">New
                 category
               </a>
-              <a class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" [hidden]="category.id == 1">
+              <a href="#" class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static" [hidden]="category.id == 1">
                 Edit category
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item">Export TLE data</a>
-              <a class="dropdown-item">Import TLE data</a>
+              <a href="#" class="dropdown-item">Export TLE data</a>
+              <a href="#" class="dropdown-item">Import TLE data</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static" (click)="newTle()">New
+              <a href="#" class="dropdown-item" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static" (click)="newTle()">New
                 TLE data</a>
             </div>
           </div>
