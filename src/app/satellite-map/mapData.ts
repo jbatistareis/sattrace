@@ -5,6 +5,7 @@ export class MapData {
         public orbitData: any,
         public marker: any,
         public path: any,
-        public height?: number
+        public height?: number,
+        public lastPathUpdate?: any
     ) { }
 }

@@ -67,6 +67,20 @@ export class SatelliteMapComponent implements OnInit {
           this.setSatellitePosition(this.mapDataList[i], date, gmst);
       },
       1000);
+
+    // update satellites paths every minute
+    setInterval(
+      () => {
+        for (let i = 0; i < this.mapDataList.length; i++) {
+          for (let j = 0; j < 29; j++) {
+            this.mapDataList[i].lastPathUpdate.add(j, 'second');
+            this.addCoordToPath(this.mapDataList[i], this.mapDataList[i].lastPathUpdate.toDate());
+          }
+
+          this.removeCoordsFromPathBeginning(this.mapDataList[i], 14);
+        }
+      },
+      60000);
   }
 
   // when new tle is picked
@@ -101,18 +115,26 @@ export class SatelliteMapComponent implements OnInit {
   }
 
   setSatellitePath(mapData: MapData) {
-    let pathDate = moment();
+    let coordMoment = moment();
 
     for (let i = 0; i < 120; i++) {
-      pathDate.add(i, 'second');
-      let convDate = pathDate.toDate();
-
-      let positionAndVelocity = satellite.propagate(mapData.orbitData, convDate);
-      let gmst = satellite.gstime(convDate);
-      let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
-
-      mapData.path.addLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
+      coordMoment.add(i + (i % 30), 'second');
+      this.addCoordToPath(mapData, coordMoment.toDate());
     }
+
+    mapData.lastPathUpdate = coordMoment;
+  }
+
+  addCoordToPath(mapData: MapData, date: Date) {
+    let positionAndVelocity = satellite.propagate(mapData.orbitData, date);
+    let gmst = satellite.gstime(date);
+    let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+
+    mapData.path.addLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
+  }
+
+  removeCoordsFromPathBeginning(mapData: MapData, amount: number) {
+    mapData.path.getLatLngs().splice(0, amount);
   }
 
   // util
