@@ -17,7 +17,7 @@ export class SatelliteMapComponent implements OnInit {
 
   private map: any;
   private mapDataList: MapData[] = [];
-  private markerIcon = L.divIcon({ className: '', html: '<span style="font-size: 35pt;">&#x01F6F0</span>' });
+  private markerIcon = L.divIcon({ className: '', iconAnchor: [20, 35], html: '<span style="font-size: 40px;">&#x01F6F0</span>' });
 
   public selectedTle: TLE[] = [];
 
@@ -35,6 +35,8 @@ export class SatelliteMapComponent implements OnInit {
       zoom: 1,
       maxZoom: 3,
       worldCopyJump: true,
+      maxBoundsViscosity: 1.0,
+      maxBounds: L.latLngBounds([85, -180], [-85, 180]),
       layers: L.tileLayer('osm/{z}/{x}/{y}.png', {
         attribution:
           'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, '
@@ -44,16 +46,23 @@ export class SatelliteMapComponent implements OnInit {
 
     this.map.on('contextmenu', (event) => this.map.panTo([0, 0]));
 
-    let tle = new TLE();
-    tle.name = 'ISS (ZARYA)';
-    tle.line1 = '1 25544U 98067A   18247.77707326  .00001928  00000-0  36632-4 0  9995';
-    tle.line2 = '2 25544  51.6425 342.0667 0005865 125.4674  16.3192 15.53930075130897';
-    this.toggleMapData(tle);
+    let tle1 = new TLE();
+    tle1.name = 'ISS (ZARYA)';
+    tle1.line1 = '1 25544U 98067A   18248.07344907  .00001903  00000-0  36250-4 0  9990';
+    tle1.line2 = '2 25544  51.6425 340.5895 0005838 126.4338 234.4220 15.53931367130947';
+    let tle2 = new TLE();
+    tle2.name = 'FLOCK 2E\'-14';
+    tle2.line1 = '1 41762U 98067KJ  18247.58864783  .00092841  00000-0  39330-3 0  9996';
+    tle2.line2 = '2 41762  51.6310 286.8413 0003484  42.8751 317.2523 15.84579370112664';
+    this.toggleMapData(tle1);
+    this.toggleMapData(tle2);
 
     // update satellites every second
     setInterval(
       () => {
-        let date = new Date();
+        let momentDate = moment();
+        let date = momentDate.toDate();
+
         let gmst = satellite.gstime(date);
         for (let i = 0; i < this.mapDataList.length; i++)
           this.setSatellitePosition(this.mapDataList[i], date, gmst);
@@ -84,7 +93,7 @@ export class SatelliteMapComponent implements OnInit {
     let positionAndVelocity = satellite.propagate(mapData.orbitData, date);
     let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-    mapData.marker.setLatLng([satellite.degreesLat(geodeticCoords.latitude), satellite.degreesLong(geodeticCoords.longitude)]);
+    mapData.marker.setLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     mapData.marker.setOpacity(1.0);
     mapData.height = geodeticCoords.height;
   }
@@ -92,7 +101,7 @@ export class SatelliteMapComponent implements OnInit {
   setSatellitePath(mapData: MapData) {
     let pathDate = moment();
 
-    for (let i = 0; i < 180; i++) {
+    for (let i = 0; i < 100; i++) {
       pathDate.add(i, 's');
       let convDate = pathDate.toDate();
 
@@ -100,7 +109,7 @@ export class SatelliteMapComponent implements OnInit {
       let gmst = satellite.gstime(convDate);
       let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-      mapData.path.addLatLng([satellite.degreesLat(geodeticCoords.latitude), satellite.degreesLong(geodeticCoords.longitude)]);
+      mapData.path.addLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     }
   }
 
