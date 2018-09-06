@@ -4,6 +4,7 @@ export class TLE {
         public name: string = undefined,
         public line1: string = undefined,
         public line2: string = undefined,
-        public category: number = 1
+        public category: number = 1,
+        public color?: string
     ) { }
 }

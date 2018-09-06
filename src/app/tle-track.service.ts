@@ -7,7 +7,7 @@ import { TLE } from './tle-list/tle';
 })
 export class TleTrackService {
 
-  private tleList: TLE[] = [];
+  public tleList: TLE[] = [];
 
   @Output() toggleTle: EventEmitter<TLE> = new EventEmitter();
   @Output() updatedTle: EventEmitter<TLE> = new EventEmitter();
@@ -32,10 +32,13 @@ export class TleTrackService {
 
   toggle(tle: TLE) {
     let index = this.tleList.indexOf(this.tleList.filter((item) => { return item.id === tle.id })[0]);
-    if (index >= 0)
+    if (index >= 0) {
       this.tleList.splice(index, 1);
-    else
+    }
+    else {
+      tle.color = 'rgb(' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ')';
       this.tleList.push(tle);
+    }
 
     this.toggleTle.next(tle);
   }

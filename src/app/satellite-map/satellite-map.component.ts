@@ -20,8 +20,6 @@ export class SatelliteMapComponent implements OnInit {
   private markerIcon = L.divIcon({ className: '', iconAnchor: [20, 35], html: '<span style="font-size: 40px;">&#x01F6F0</span>' });
   private mapDataList: MapData[] = [];
 
-  public selectedTle: TLE[] = [];
-
   constructor(private tleTrackService: TleTrackService) { }
 
   ngOnInit() {
@@ -50,27 +48,26 @@ export class SatelliteMapComponent implements OnInit {
     this.tleTrackService.updatedTle.subscribe((tle) => this.updateSatelliteTle(tle));
   }
 
+  selectedTle(): TLE[] {
+    return this.tleTrackService.tleList;
+  }
+
   toggleMapData(tle: TLE) {
     let index = this.findMapListIndexByTLEId(tle.id);
     if (index >= 0) {
       this.map.removeLayer(this.mapDataList[index].path);
       this.map.removeLayer(this.mapDataList[index].marker);
       this.mapDataList.splice(index, 1);
-      this.selectedTle.splice(index, 1);
     } else {
-      let randomColor = 'rgb(' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ')';
-      tle['color'] = randomColor;
-
       let mapData = new MapData(
         tle.id,
         tle.name,
-        randomColor,
+        tle.color,
         satellite.twoline2satrec(tle.line1, tle.line2),
         L.marker([0, 0], { opacity: 0.0, icon: this.markerIcon }).bindTooltip('').bindPopup('').addTo(this.map),
-        new L.Wrapped.Polyline([], { color: randomColor, smoothFactor: 2.0 }).bindTooltip(tle.name).addTo(this.map));
+        new L.Wrapped.Polyline([], { color: tle.color, smoothFactor: 2.0 }).bindTooltip(tle.name).addTo(this.map));
 
       this.mapDataList.push(mapData);
-      this.selectedTle.push(tle);
 
       this.updatePathPositions();
       this.updateSatellitePositions();
@@ -133,11 +130,11 @@ export class SatelliteMapComponent implements OnInit {
 
   setSatelliteIformation(mapData: MapData) {
     let html =
-      '<table>'
+      '<table class="text-monospace">'
       + '<tr><td colspan="2"><label><b>' + mapData.name + '</b></label></td></tr>'
-      + '<tr><td><b>lat</b></td><td>' + mapData.marker.getLatLng().lat + '°</td></tr>'
-      + '<tr><td><b>lng</b></td><td>' + mapData.marker.getLatLng().lng + '°</td></tr>'
-      + '<tr><td><b>hgt</b></td><td>' + Math.round(mapData.height) + 'km</td></tr>'
+      + '<tr><td><b>lat.</b></td><td>' + mapData.marker.getLatLng().lat + '°</td></tr>'
+      + '<tr><td><b>lng.</b></td><td>' + mapData.marker.getLatLng().lng + '°</td></tr>'
+      + '<tr><td><b>hgt.</b></td><td>' + Math.round(mapData.height) + 'km</td></tr>'
       + '</table>'
 
     mapData.marker.setTooltipContent(html);
