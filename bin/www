@@ -7,89 +7,106 @@
 var app = require('../app');
 var debug = require('debug')('satview:server');
 var http = require('http');
+var throng = require('throng');
 var postgresDatabase = require('../database/postgresDatabase.js');
-var terminus = require('@godaddy/terminus');
 
-/**
- * Get port from environment and store in Express.
- */
+throng({
+  workers: process.env.WEB_CONCURRENCY || 1,
+  master: master,
+  start: worker
+});
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+function master() {
+  console.log(`Started master with pid ${process.pid}`);
 
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-// graceful shutdown
-terminus(server, { onSignal: function () { return Promise.all([postgresDatabase.closeConnections()]); } });
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
+  process.on('SIGTERM', function () {
+    console.log('Closing database connections');
+    postgresDatabase.closeConnections();
+    process.exit();
+  });
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
+function worker(id) {
+  console.log(`Started worker ${id} with pid ${process.pid}`);
 
-function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
+  /**
+   * Get port from environment and store in Express.
+   */
+
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
+
+  /**
+   * Create HTTP server.
+   */
+
+  var server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+
+  /**
+   * Normalize a port into a number, string, or false.
+   */
+
+  function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+      // named pipe
+      return val;
+    }
+
+    if (port >= 0) {
+      // port number
+      return port;
+    }
+
+    return false;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  /**
+   * Event listener for HTTP server "error" event.
+   */
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
+  function onError(error) {
+    if (error.syscall !== 'listen') {
       throw error;
+    }
+
+    var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges');
+        process.exit(1);
+        break;
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use');
+        process.exit(1);
+        break;
+      default:
+        throw error;
+    }
   }
-}
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
 
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+  }
 }
