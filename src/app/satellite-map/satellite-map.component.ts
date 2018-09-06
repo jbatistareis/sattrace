@@ -45,7 +45,9 @@ export class SatelliteMapComponent implements OnInit {
     setInterval(() => this.updateSatellitePositions(), 2000);
     setInterval(() => this.updatePathPositions(), 60000);
 
+    // listeners
     this.tleTrackService.toggleTle.subscribe((tle) => this.toggleMapData(tle));
+    this.tleTrackService.updatedTle.subscribe((tle) => this.updateSatelliteTle(tle));
   }
 
   toggleMapData(tle: TLE) {
@@ -106,10 +108,10 @@ export class SatelliteMapComponent implements OnInit {
   }
 
   findMapListIndexByTLEId(id): number {
-    return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id == id; })[0]);
+    return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id === id; })[0]);
   }
 
-  updateSatelliteTLE(tle: TLE) {
+  updateSatelliteTle(tle: TLE) {
     this.mapDataList[this.findMapListIndexByTLEId(tle.id)].orbitData = satellite.twoline2satrec(tle.line1, tle.line2);
   }
 
