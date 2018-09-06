@@ -122,11 +122,7 @@ export class TleListComponent implements OnInit {
   }
 
   toggleTle(tle: TLE) {
-    let index = this.selectedTle.indexOf(this.selectedTle.filter((item) => { return item.name == tle.name; })[0]);
-    if (index >= 0)
-      this.selectedTle.splice(index, 1);
-    else
-      this.selectedTle.push(tle);
+    this.tleTrackService.toggle(tle);
   }
 
   execSearch(value: string) {

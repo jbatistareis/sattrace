@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Observable } from 'rxjs';
 import { TLE } from './tle-list/tle';
 
 @Injectable({
@@ -6,5 +7,11 @@ import { TLE } from './tle-list/tle';
 })
 export class TleTrackService {
 
+  @Output() toggleTle: EventEmitter<TLE> = new EventEmitter();
+
   constructor() { }
+
+  toggle(tle: TLE) {
+    this.toggleTle.next(tle);
+  }
 }

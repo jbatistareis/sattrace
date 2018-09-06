@@ -17,15 +17,10 @@ declare var L: any;
 export class SatelliteMapComponent implements OnInit {
 
   private map: any;
-  private mapDataList: MapData[] = [];
   private markerIcon = L.divIcon({ className: '', iconAnchor: [20, 35], html: '<span style="font-size: 40px;">&#x01F6F0</span>' });
+  private mapDataList: MapData[] = [];
 
   public selectedTle: TLE[] = [];
-
-  @Input()
-  set display(tles: TLE[]) {
-    this.selectedTle = tles;
-  }
 
   constructor(private tleTrackService: TleTrackService) { }
 
@@ -49,17 +44,20 @@ export class SatelliteMapComponent implements OnInit {
     // updater
     setInterval(() => this.updateSatellitePositions(), 2000);
     setInterval(() => this.updatePathPositions(), 60000);
+
+    this.tleTrackService.toggleTle.subscribe((tle) => this.toggleMapData(tle));
   }
 
-  // when new tle is picked
   toggleMapData(tle: TLE) {
     let index = this.findMapListIndexByTLEId(tle.id);
     if (index >= 0) {
       this.map.removeLayer(this.mapDataList[index].path);
       this.map.removeLayer(this.mapDataList[index].marker);
       this.mapDataList.splice(index, 1);
+      this.selectedTle.splice(index, 1);
     } else {
       let randomColor = 'rgb(' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ')';
+      tle['color'] = randomColor;
 
       let mapData = new MapData(
         tle.id,
@@ -70,6 +68,7 @@ export class SatelliteMapComponent implements OnInit {
         new L.Wrapped.Polyline([], { color: randomColor, smoothFactor: 2.0 }).bindTooltip(tle.name).addTo(this.map));
 
       this.mapDataList.push(mapData);
+      this.selectedTle.push(tle);
 
       this.updatePathPositions();
       this.updateSatellitePositions();
@@ -106,7 +105,7 @@ export class SatelliteMapComponent implements OnInit {
     mapData.path.setLatLngs(finalCoords);
   }
 
-  findMapListIndexByTLEId(id) {
+  findMapListIndexByTLEId(id): number {
     return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id == id; })[0]);
   }
 
