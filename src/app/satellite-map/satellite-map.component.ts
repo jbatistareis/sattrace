@@ -27,7 +27,7 @@ export class SatelliteMapComponent implements OnInit {
     this.map = L.map('map', {
       center: [0, 0],
       zoom: 1,
-      maxZoom: 3,
+      maxZoom: 4,
       worldCopyJump: true,
       maxBoundsViscosity: 1.0,
       maxBounds: L.latLngBounds([85, -180], [-85, 180]),
