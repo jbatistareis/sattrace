@@ -43,44 +43,11 @@ export class SatelliteMapComponent implements OnInit {
           + '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a></a>'
       })
     });
-
     this.map.on('contextmenu', (event) => this.map.panTo([0, 0]));
 
-    let tle1 = new TLE();
-    tle1.name = 'ISS (ZARYA)';
-    tle1.line1 = '1 25544U 98067A   18248.07344907  .00001903  00000-0  36250-4 0  9990';
-    tle1.line2 = '2 25544  51.6425 340.5895 0005838 126.4338 234.4220 15.53931367130947';
-    let tle2 = new TLE();
-    tle2.name = 'FLOCK 2E\'-14';
-    tle2.line1 = '1 41762U 98067KJ  18247.58864783  .00092841  00000-0  39330-3 0  9996';
-    tle2.line2 = '2 41762  51.6310 286.8413 0003484  42.8751 317.2523 15.84579370112664';
-    this.toggleMapData(tle1);
-    this.toggleMapData(tle2);
-
-    // update satellites every second
-    setInterval(
-      () => {
-        let date = new Date();
-        let gmst = satellite.gstime(date);
-
-        for (let i = 0; i < this.mapDataList.length; i++)
-          this.setSatellitePosition(this.mapDataList[i], date, gmst);
-      },
-      1000);
-
-    // update satellites paths every minute
-    setInterval(
-      () => {
-        for (let i = 0; i < this.mapDataList.length; i++) {
-          for (let j = 0; j < 29; j++) {
-            this.mapDataList[i].lastPathUpdate.add(j, 'second');
-            this.addCoordToPath(this.mapDataList[i], this.mapDataList[i].lastPathUpdate.toDate());
-          }
-
-          this.removeCoordsFromPathBeginning(this.mapDataList[i], 14);
-        }
-      },
-      60000);
+    // updater
+    setInterval(() => this.updateSatellitePositions(), 2000);
+    setInterval(() => this.updatePathPositions(), 60000);
   }
 
   // when new tle is picked
@@ -97,11 +64,13 @@ export class SatelliteMapComponent implements OnInit {
         tle.name,
         randomColor,
         satellite.twoline2satrec(tle.line1, tle.line2),
-        L.marker([0, 0], { title: tle.name, opacity: 0.0, icon: this.markerIcon }).addTo(this.map),
-        new L.Wrapped.Polyline([], { color: randomColor }).addTo(this.map));
+        L.marker([0, 0], { opacity: 0.0, icon: this.markerIcon }).bindTooltip(tle.name).bindPopup(tle.name).addTo(this.map),
+        new L.Wrapped.Polyline([], { color: randomColor, smoothFactor: 2.0 }).bindTooltip(tle.name).addTo(this.map));
 
-      this.setSatellitePath(mapData);
       this.mapDataList.push(mapData);
+
+      this.updatePathPositions();
+      this.updateSatellitePositions();
     }
   }
 
@@ -112,29 +81,56 @@ export class SatelliteMapComponent implements OnInit {
     mapData.marker.setLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     mapData.marker.setOpacity(1.0);
     mapData.height = geodeticCoords.height;
+
+    this.setSatelliteIformation(mapData);
   }
 
-  setSatellitePath(mapData: MapData) {
-    let coordMoment = moment();
+  setSatellitePath(mapData: MapData, date: Date, gmst: any) {
+    let coordMoment = moment(date);
+    coordMoment.subtract(512, 'second');
+    let finalCoords = [];
 
-    for (let i = 0; i < 120; i++) {
-      coordMoment.add(i + (i % 30), 'second');
-      this.addCoordToPath(mapData, coordMoment.toDate());
+    for (let i = 0; i < 37; i++) {
+      coordMoment.add(i + 128, 'second');
+      let coordDate = coordMoment.toDate();
+
+      let positionAndVelocity = satellite.propagate(mapData.orbitData, coordDate);
+      let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+
+      finalCoords.push([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     }
 
-    mapData.lastPathUpdate = coordMoment;
+    finalCoords.push(finalCoords[0]);
+    mapData.path.setLatLngs(finalCoords);
   }
 
-  addCoordToPath(mapData: MapData, date: Date) {
-    let positionAndVelocity = satellite.propagate(mapData.orbitData, date);
+  updateSatellitePositions() {
+    let date = new Date();
     let gmst = satellite.gstime(date);
-    let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-    mapData.path.addLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
+    for (let i = 0; i < this.mapDataList.length; i++)
+      this.setSatellitePosition(this.mapDataList[i], date, gmst);
   }
 
-  removeCoordsFromPathBeginning(mapData: MapData, amount: number) {
-    mapData.path.getLatLngs().splice(0, amount);
+  updatePathPositions() {
+    let date = new Date();
+    let gmst = satellite.gstime(date);
+
+    for (let i = 0; i < this.mapDataList.length; i++)
+      this.setSatellitePath(this.mapDataList[i], date, gmst);
+  }
+
+  setSatelliteIformation(mapData: MapData) {
+    let html =
+      '<table>'
+      + '<tr><td colspan="2"><label><b>' + mapData.name + '</b></label></td></tr>'
+      + '<tr><td><b>lat</b></td><td>' + mapData.marker.getLatLng().lat + '°</td></tr>'
+      + '<tr><td><b>lng</b></td><td>' + mapData.marker.getLatLng().lng + '°</td></tr>'
+      + '<tr><td><b>hgt</b></td><td>' + Math.round(mapData.height) + 'km</td></tr>'
+      + '</table>'
+
+    mapData.marker.setTooltipContent(html);
+    mapData.marker.setPopupContent(html);
   }
 
   // util
