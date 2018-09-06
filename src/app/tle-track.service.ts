@@ -1,5 +1,4 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
 import { TLE } from './tle-list/tle';
 
 @Injectable({

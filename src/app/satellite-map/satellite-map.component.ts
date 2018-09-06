@@ -41,7 +41,7 @@ export class SatelliteMapComponent implements OnInit {
     });
     this.map.on('contextmenu', (event) => this.map.panTo([0, 0]));
 
-    // updater
+    // updaters
     setInterval(() => this.updateSatellitePositions(), 2000);
     setInterval(() => this.updatePathPositions(), 60000);
 
