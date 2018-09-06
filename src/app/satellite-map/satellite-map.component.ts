@@ -87,10 +87,9 @@ export class SatelliteMapComponent implements OnInit {
 
   setSatellitePath(mapData: MapData, date: Date, gmst: any) {
     let coordMoment = moment(date);
-    coordMoment.subtract(512, 'second');
     let finalCoords = [];
 
-    for (let i = 0; i < 37; i++) {
+    for (let i = 0; i < 38; i++) {
       coordMoment.add(i + 128, 'second');
       let coordDate = coordMoment.toDate();
 
