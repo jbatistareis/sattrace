@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as moment from 'moment';
-import { MapData } from './mapData'
+import { TleTrackService } from '../tle-track.service';
+import { MapData } from './mapData';
 import { TLE } from '../tle-list/tle';
 
 // jquery
@@ -26,7 +27,7 @@ export class SatelliteMapComponent implements OnInit {
     this.selectedTle = tles;
   }
 
-  constructor() { }
+  constructor(private tleTrackService: TleTrackService) { }
 
   ngOnInit() {
     // setup map
@@ -52,7 +53,7 @@ export class SatelliteMapComponent implements OnInit {
 
   // when new tle is picked
   toggleMapData(tle: TLE) {
-    let index = this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.name == tle.name; })[0]);
+    let index = this.findMapListIndexByTLEId(tle.id);
     if (index >= 0) {
       this.map.removeLayer(this.mapDataList[index].path);
       this.map.removeLayer(this.mapDataList[index].marker);
@@ -61,10 +62,11 @@ export class SatelliteMapComponent implements OnInit {
       let randomColor = 'rgb(' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ',' + Math.floor(Math.random() * 240) + ')';
 
       let mapData = new MapData(
+        tle.id,
         tle.name,
         randomColor,
         satellite.twoline2satrec(tle.line1, tle.line2),
-        L.marker([0, 0], { opacity: 0.0, icon: this.markerIcon }).bindTooltip(tle.name).bindPopup(tle.name).addTo(this.map),
+        L.marker([0, 0], { opacity: 0.0, icon: this.markerIcon }).bindTooltip('').bindPopup('').addTo(this.map),
         new L.Wrapped.Polyline([], { color: randomColor, smoothFactor: 2.0 }).bindTooltip(tle.name).addTo(this.map));
 
       this.mapDataList.push(mapData);
@@ -102,6 +104,14 @@ export class SatelliteMapComponent implements OnInit {
 
     finalCoords.push(finalCoords[0]);
     mapData.path.setLatLngs(finalCoords);
+  }
+
+  findMapListIndexByTLEId(id) {
+    return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id == id; })[0]);
+  }
+
+  updateSatelliteTLE(tle: TLE) {
+    this.mapDataList[this.findMapListIndexByTLEId(tle.id)].orbitData = satellite.twoline2satrec(tle.line1, tle.line2);
   }
 
   updateSatellitePositions() {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { TleTrackService } from '../tle-track.service';
 import { Category } from './category';
 import { TLE } from './tle';
 
@@ -25,7 +26,7 @@ export class TleListComponent implements OnInit {
 
   private confirmDelete: boolean = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tleTrackService: TleTrackService) { }
 
   ngOnInit() {
     this.getCategories();
