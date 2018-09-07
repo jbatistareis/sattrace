@@ -13,6 +13,9 @@ declare var $: any;
 })
 export class TleListComponent implements OnInit {
 
+  private confirmDelete: boolean = false;
+  private importFile: File = undefined;
+
   public tleList: TLE[] = [];
   public categoryList: Category[] = [];
   public noCategory: Category = new Category(1, 'No category');
@@ -23,8 +26,6 @@ export class TleListComponent implements OnInit {
   public formCategory: Category = new Category();
   public formTle: TLE = new TLE();
   public search: string;
-
-  private confirmDelete: boolean = false;
 
   constructor(private http: HttpClient, private tleTrackService: TleTrackService) { }
 
@@ -51,7 +52,7 @@ export class TleListComponent implements OnInit {
 
   deleteCategory() {
     if (this.confirmDelete)
-      this.http.delete('category/' + this.formCategory.id).subscribe(
+      this.http.delete('category/' + this.formCategory.id, { responseType: 'text' }).subscribe(
         (response) => {
           $('div#categoryEditModal').modal('hide');
           this.getCategories();
@@ -97,7 +98,7 @@ export class TleListComponent implements OnInit {
 
   deleteTle() {
     if (this.confirmDelete)
-      this.http.delete('tle/' + this.formTle.id).subscribe(
+      this.http.delete('tle/' + this.formTle.id, { responseType: 'text' }).subscribe(
         (response) => {
           $('div#tleEditModal').modal('hide');
           this.getTle(this.formCategory.id);
@@ -135,6 +136,30 @@ export class TleListComponent implements OnInit {
         },
         (error) => this.showError(error)
       );
+  }
+
+  // upload
+  setFile(event) {
+    this.importFile = event.target.files[0];
+  }
+
+  sendFile() {
+    if (this.importFile) {
+      let formData = new FormData();
+      formData.append('file', this.importFile, this.importFile.name);
+
+      this.http.post('tle/import/' + this.category.id, formData, { responseType: 'text' }).subscribe(
+        (response) => {
+          this.importFile = undefined;
+          $('div#uploadResult').html(response);
+          this.getTle(this.formCategory.id);
+        },
+        (error) => {
+          this.importFile = undefined;
+          $('div#uploadResult').html(error.error);
+        }
+      );
+    }
   }
 
   // util

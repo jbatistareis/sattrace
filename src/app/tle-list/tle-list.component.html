@@ -23,12 +23,13 @@
                   category
                 </a>
                 <a href="#" class="dropdown-item" data-toggle="modal" data-target="#categoryEditModal" data-backdrop="static"
-                  [hidden]="category.id == 1">
+                  [hidden]="category.id === 1">
                   Edit category
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item">Export category</a>
-                <a href="#" class="dropdown-item">Import to category</a>
+                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#importModal" data-backdrop="static">Import
+                  into category</a>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static"
                   (click)="newTle()">New
@@ -153,6 +154,36 @@
           <button type="button" class="btn btn-danger btn-sm" data-container="body" data-toggle="popover"
             data-placement="bottom" data-content="Click again to confirm." [disabled]="formTle.id === undefined"
             (click)="deleteTle()"><i class="fas fa-trash"></i>&nbsp;Delete</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- import modal -->
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-upload"></i>&nbsp;Import TLE data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #impForm="ngForm" (ngSubmit)="sendFile()">
+        <div class="modal-body">
+          <div class="form-group form-row">
+            <label for="catName" class="col-sm-2 col-form-label">Text file</label>
+            <div class="col-sm-10">
+              <input type="file" maxlength="20" id="file" name="file" class="form-control form-control-sm" (change)="setFile($event)"
+                required />
+            </div>
+          </div>
+          <div id="uploadResult"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i>&nbsp;Send</button>
           <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
         </div>
       </form>
