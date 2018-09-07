@@ -88,7 +88,20 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
 
 // export category
 router.get('/export/category/:id', function (req, res, next) {
-  // TODO
+  tleModel.findByCategory(req.params.id)
+    .then((result) => {
+      let content = '';
+      for (let i = 0; i < result.length; i++)
+        content += result[i].name.padEnd(24, ' ') + '\n' + result[i].line1 + '\n' + result[i].line2 + '\n';
+
+      res.set({
+        "Content-Type": "application/octet-stream",
+        "charset": "utf-8",
+        "Content-Disposition": "attachment; filename=\"export.txt\""
+      });
+      res.send(content);
+    })
+    .catch((error) => tleModel.parseError(res, error));
 });
 
 // export tle list
