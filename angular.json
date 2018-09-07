@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "satview": {
+    "sattrace": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -59,18 +59,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "satview:build"
+            "browserTarget": "sattrace:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "satview:build:production"
+              "browserTarget": "sattrace:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "satview:build"
+            "browserTarget": "sattrace:build"
           }
         },
         "test": {
@@ -104,7 +104,7 @@
         }
       }
     },
-    "satview-e2e": {
+    "sattrace-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -112,11 +112,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "satview:serve"
+            "devServerTarget": "sattrace:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "satview:serve:production"
+              "devServerTarget": "sattrace:serve:production"
             }
           }
         },
@@ -132,5 +132,5 @@
       }
     }
   },
-  "defaultProject": "satview"
+  "defaultProject": "sattrace"
 }
