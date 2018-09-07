@@ -38,6 +38,7 @@ export class SatelliteMapComponent implements OnInit {
       })
     });
     this.map.on('contextmenu', (event) => this.map.panTo([0, 0]));
+    L.control.scale().addTo(this.map);
 
     // updaters
     setInterval(() => this.updateSatellitePositions(), 2000);
