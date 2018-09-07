@@ -72,22 +72,24 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
   textData = textData.split(/\r?\n/);
 
   try {
-    for (let i = 0; i < textData.length; i += 3)
-      if (textData[i].match(/^\w/)) {
-        if (textData[i].trim().length > 24)
-          throw 'Error in line ' + (i + 1) + ': Name field length incorrect.Found ' + textData[i].trim().length + ', maximum is 24';
+    for (let i = 0; i < textData.length; i += 3) {
+      if (textData[i].match(/^0 /))
+        textData[i] = textData[i].substring(2);
 
-        if (textData[i + 1].trim().length != 69)
-          throw 'Error in line ' + (i + 2) + ': Line 1 field length incorrect.Found ' + textData[i + 1].trim().length + ', required is 69';
+      if (textData[i].trim().length > 24)
+        throw 'Error in line ' + (i + 1) + ': Name field length incorrect. Found ' + textData[i].trim().length + ', maximum is 24';
 
-        if (textData[i + 2].trim().length != 69)
-          throw 'Error in line ' + (i + 3) + ': Line 2 field length incorrect.Found ' + textData[i + 2].trim().length + ', required is 69';
+      if (textData[i + 1].trim().length != 69)
+        throw 'Error in line ' + (i + 2) + ': Line 1 field length incorrect. Found ' + textData[i + 1].trim().length + ', required is 69';
 
-        tles.push(textData[i].trim());
-        tles.push(textData[i + 1].trim());
-        tles.push(textData[i + 2].trim());
-        tles.push(req.params.id);
-      }
+      if (textData[i + 2].trim().length != 69)
+        throw 'Error in line ' + (i + 3) + ': Line 2 field length incorrect. Found ' + textData[i + 2].trim().length + ', required is 69';
+
+      tles.push(textData[i].trim());
+      tles.push(textData[i + 1].trim());
+      tles.push(textData[i + 2].trim());
+      tles.push(req.params.id);
+    }
   } catch (error) {
     res.status(500);
     res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: { status: error } });
