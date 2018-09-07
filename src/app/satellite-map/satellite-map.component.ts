@@ -93,7 +93,7 @@ export class SatelliteMapComponent implements OnInit {
   setSatellitePath(mapData: MapData) {
     let finalCoords = [];
     let coordMoment = moment();
-    coordMoment.subtract(1, 'hour')
+    coordMoment.subtract(1, 'hour');
 
 
     for (let i = 0; i < 180; i++) {

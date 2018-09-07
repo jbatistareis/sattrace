@@ -18,16 +18,16 @@ throng({
 
 function master() {
   console.log(`Started master with pid ${process.pid}`);
-
-  process.on('SIGTERM', function () {
-    console.log('Closing database connections');
-    postgresDatabase.closeConnections();
-    process.exit();
-  });
 }
 
 function worker(id) {
   console.log(`Started worker ${id} with pid ${process.pid}`);
+
+  process.on('SIGTERM', function () {
+    console.log(`Worker ${id} closing database connection`);
+    postgresDatabase.closeConnection();
+    process.exit();
+  });
 
   /**
    * Get port from environment and store in Express.
