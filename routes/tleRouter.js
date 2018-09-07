@@ -88,15 +88,17 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
         tles.push(textData[i + 2].trim());
         tles.push(req.params.id);
       }
-
-    tleModel.import(tles);
-
-    res.status(200);
-    res.render('message', { message: String.fromCodePoint(0x2714) + ' File imported' });
   } catch (error) {
     res.status(500);
-    res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: { stack: error } });
+    res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: { status: error } });
   }
+
+  tleModel.import(tles)
+    .then((result) => {
+      res.status(200);
+      res.render('message', { message: String.fromCodePoint(0x2714) + ' File imported' });
+    })
+    .catch((error) => tleModel.parseError(res, error));
 });
 
 // export category
