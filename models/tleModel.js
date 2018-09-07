@@ -12,10 +12,14 @@ module.exports = {
             'select * from tle where category = $1 order by name',
             [categoryId]);
     },
-    findById: (tleId) => {
+    findById: (tleIds) => {
+        let idNumbers = [];
+        for (let i = 0; i < tleIds.length; i++)
+            idNumbers[i] = Number(tleIds[i]);
+
         return postgresDatabase.query(
             'select * from tle where id in($1) order by name',
-            [tleId]);
+            [idNumbers]);
     },
     new: (tle) => {
         return postgresDatabase.insert(

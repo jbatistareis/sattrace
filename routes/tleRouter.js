@@ -4,6 +4,19 @@ var router = express.Router();
 
 var tleModel = require('../models/tleModel.js');
 
+function sendListAsFile(tles, res) {
+  let content = '';
+  for (let i = 0; i < tles.length; i++)
+    content += tles[i].name.padEnd(24, ' ') + '\n' + tles[i].line1 + '\n' + tles[i].line2 + '\n';
+
+  res.set({
+    "Content-Type": "application/octet-stream",
+    "charset": "utf-8",
+    "Content-Disposition": "attachment; filename=\"export.txt\""
+  });
+  res.send(content);
+}
+
 // find all
 router.get('/', function (req, res, next) {
   tleModel.findAll()
@@ -89,24 +102,15 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
 // export category
 router.get('/export/category/:id', function (req, res, next) {
   tleModel.findByCategory(req.params.id)
-    .then((result) => {
-      let content = '';
-      for (let i = 0; i < result.length; i++)
-        content += result[i].name.padEnd(24, ' ') + '\n' + result[i].line1 + '\n' + result[i].line2 + '\n';
-
-      res.set({
-        "Content-Type": "application/octet-stream",
-        "charset": "utf-8",
-        "Content-Disposition": "attachment; filename=\"export.txt\""
-      });
-      res.send(content);
-    })
+    .then((result) => sendListAsFile(result, res))
     .catch((error) => tleModel.parseError(res, error));
 });
 
 // export tle list
-router.get('/export/list/:id', function (req, res, next) {
-  // TODO
+router.get('/export/list/', function (req, res, next) {
+  tleModel.findById(req.query.id)
+    .then((result) => sendListAsFile(result, res))
+    .catch((error) => tleModel.parseError(res, error));
 });
 
 module.exports = router;
