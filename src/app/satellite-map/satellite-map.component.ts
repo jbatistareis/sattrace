@@ -52,6 +52,10 @@ export class SatelliteMapComponent implements OnInit {
     return this.tleTrackService.tleList;
   }
 
+  toggleTle(tle: TLE) {
+    this.tleTrackService.toggle(tle);
+  }
+
   toggleMapData(tle: TLE) {
     let index = this.findMapListIndexByTLEId(tle.id);
     if (index >= 0) {
@@ -74,9 +78,10 @@ export class SatelliteMapComponent implements OnInit {
     }
   }
 
-  setSatellitePosition(mapData: MapData, date: Date, gmst: any) {
+  setSatellitePosition(mapData: MapData) {
+    let date = new Date();
     let positionAndVelocity = satellite.propagate(mapData.orbitData, date);
-    let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+    let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, satellite.gstime(date));
 
     mapData.marker.setLatLng([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     mapData.marker.setOpacity(1.0);
@@ -85,22 +90,22 @@ export class SatelliteMapComponent implements OnInit {
     this.setSatelliteIformation(mapData);
   }
 
-  setSatellitePath(mapData: MapData, date: Date, gmst: any) {
-    let coordMoment = moment(date);
-    coordMoment.subtract(2, 'minute')
+  setSatellitePath(mapData: MapData) {
     let finalCoords = [];
+    let coordMoment = moment();
+    coordMoment.subtract(1, 'hour')
 
-    for (let i = 0; i < 106; i++) {
-      coordMoment.add(i, 'second');
+
+    for (let i = 0; i < 180; i++) {
+      coordMoment.add(1, 'minute');
       let coordDate = coordMoment.toDate();
 
       let positionAndVelocity = satellite.propagate(mapData.orbitData, coordDate);
-      let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+      let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, satellite.gstime(coordDate));
 
       finalCoords.push([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     }
 
-    //finalCoords.push(finalCoords[0]);
     mapData.path.setLatLngs(finalCoords);
   }
 
@@ -113,19 +118,13 @@ export class SatelliteMapComponent implements OnInit {
   }
 
   updateSatellitePositions() {
-    let date = new Date();
-    let gmst = satellite.gstime(date);
-
     for (let i = 0; i < this.mapDataList.length; i++)
-      this.setSatellitePosition(this.mapDataList[i], date, gmst);
+      this.setSatellitePosition(this.mapDataList[i]);
   }
 
   updatePathPositions() {
-    let date = new Date();
-    let gmst = satellite.gstime(date);
-
     for (let i = 0; i < this.mapDataList.length; i++)
-      this.setSatellitePath(this.mapDataList[i], date, gmst);
+      this.setSatellitePath(this.mapDataList[i]);
   }
 
   setSatelliteIformation(mapData: MapData) {
