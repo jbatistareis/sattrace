@@ -235,7 +235,7 @@ ALTER TABLE ONLY public.tle
 --
 
 ALTER TABLE ONLY public.tle
-    ADD CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES public.category(id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+    ADD CONSTRAINT fk_category FOREIGN KEY (category) REFERENCES public.category(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 -- Completed on 2018-09-01 10:07:41
