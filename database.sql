@@ -1,3 +1,7 @@
+\echo 'Creating an empty database for SatTrace' 
+\prompt 'Enter the password for the user sattrace: ', pass
+create user sattrace with encrypted password :pass;
+
 --
 -- PostgreSQL database dump
 --
