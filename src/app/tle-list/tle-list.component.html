@@ -102,8 +102,8 @@
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary btn-sm" [disabled]="catForm.form.status === 'INVALID'"><i class="fas fa-save"></i>&nbsp;Save</button>
           <button type="button" class="btn btn-danger btn-sm" data-container="body" data-toggle="popover"
-            data-placement="bottom" data-content="Click again to confirm." [disabled]="(category.id === undefined) || (category.id === 1)"
-            (click)="deleteCategory()">
+            data-placement="bottom" data-content="By removing this category, you also remove the TLE data associated with it. Click again to confirm."
+            [disabled]="(category.id === undefined) || (category.id === 1)" (click)="deleteCategory()">
             <i class="fas fa-trash"></i>&nbsp;Delete</button>
           <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
         </div>

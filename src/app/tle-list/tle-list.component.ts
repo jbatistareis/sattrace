@@ -56,6 +56,7 @@ export class TleListComponent implements OnInit {
         (response) => {
           $('div#categoryEditModal').modal('hide');
           this.getCategories();
+          this.category = this.noCategory;
           this.loadCategoryData(this.noCategory);
         },
         (error) => this.showError(error)
