@@ -34,5 +34,15 @@ module.exports = {
             'select * from tle where name like $1 order by name',
             ['%' + tle.name + '%']
         )
+    },
+    bulkSave: (tles) => {
+        let values = '';
+        for (let i = 0; i < tles.length; i += 4)
+            values += `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}) `;
+
+        postgresDatabase.update(
+            `INSERT INTO tle (name, line1, line2, category) VALUES ${values}`
+            + 'ON CONFLICT (name) DO UPDATE SET line1 = EXCLUDED.line1, line2 = EXCLUDED.line2',
+            tles);
     }
 };

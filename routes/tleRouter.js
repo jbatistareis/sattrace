@@ -1,4 +1,5 @@
 var express = require('express');
+var multer = require('multer');
 var router = express.Router();
 
 var tleModel = require('../models/tleModel.js');
@@ -48,6 +49,12 @@ router.post('/search', function (req, res, next) {
   tleModel.search(req.body)
     .then((result) => res.json(result))
     .catch((error) => tleModel.parseError(res, error));
+});
+
+// import tle list
+router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('file'), function (req, res, next) {
+  console.log(req);
+  // tleModel.bulkSave();
 });
 
 // export category
