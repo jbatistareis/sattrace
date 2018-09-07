@@ -53,8 +53,35 @@ router.post('/search', function (req, res, next) {
 
 // import tle list
 router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('file'), function (req, res, next) {
-  console.log(req);
-  // tleModel.bulkSave();
+  let tles = [];
+  let textData = '';
+  textData += req.file.buffer;
+  textData = textData.split(/\r?\n/);
+
+  try {
+    for (let i = 0; i < textData.length; i++)
+      if (textData[i].match(/^\w/)) {
+        if (textData[i].trim().length > 24)
+          throw 'Error in line ' + (i + 1) + ': Name field length incorrect.Found ' + textData[i].trim().length + ', maximum is 24';
+
+        if (textData[i + 1].trim().length != 69)
+          throw 'Error in line ' + (i + 2) + ': Line 1 field length incorrect.Found ' + textData[i + 1].trim().length + ', required is 69';
+
+        if (textData[i + 2].trim().length != 69)
+          throw 'Error in line ' + (i + 3) + ': Line 2 field length incorrect.Found ' + textData[i + 2].trim().length + ', required is 69';
+
+        tles.push(textData[i].trim());
+        tles.push(textData[i + 1].trim());
+        tles.push(textData[i + 2].trim());
+        tles.push(req.params.id);
+        i += 2;
+      }
+  } catch (error) {
+    res.status(500);
+    res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: error });
+  }
+
+  tleModel.bulkSave(tles);
 });
 
 // export category

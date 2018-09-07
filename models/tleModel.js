@@ -38,11 +38,11 @@ module.exports = {
     bulkSave: (tles) => {
         let values = '';
         for (let i = 0; i < tles.length; i += 4)
-            values += `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}) `;
+            values += `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}), `;
 
         postgresDatabase.update(
-            `INSERT INTO tle (name, line1, line2, category) VALUES ${values}`
-            + 'ON CONFLICT (name) DO UPDATE SET line1 = EXCLUDED.line1, line2 = EXCLUDED.line2',
+            `INSERT INTO tle (name, line1, line2, category) VALUES ${values.substring(0, values.length - 2)} `
+            + 'ON CONFLICT (name, line1, line2) DO UPDATE SET line1 = EXCLUDED.line1, line2 = EXCLUDED.line2',
             tles);
     }
 };

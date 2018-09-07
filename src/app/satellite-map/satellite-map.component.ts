@@ -87,10 +87,11 @@ export class SatelliteMapComponent implements OnInit {
 
   setSatellitePath(mapData: MapData, date: Date, gmst: any) {
     let coordMoment = moment(date);
+    coordMoment.subtract(2, 'minute')
     let finalCoords = [];
 
-    for (let i = 0; i < 38; i++) {
-      coordMoment.add(i + 128, 'second');
+    for (let i = 0; i < 106; i++) {
+      coordMoment.add(i, 'second');
       let coordDate = coordMoment.toDate();
 
       let positionAndVelocity = satellite.propagate(mapData.orbitData, coordDate);
@@ -99,7 +100,7 @@ export class SatelliteMapComponent implements OnInit {
       finalCoords.push([satellite.degreesLat(geodeticCoords.latitude).toFixed(3), satellite.degreesLong(geodeticCoords.longitude).toFixed(3)]);
     }
 
-    finalCoords.push(finalCoords[0]);
+    //finalCoords.push(finalCoords[0]);
     mapData.path.setLatLngs(finalCoords);
   }
 
