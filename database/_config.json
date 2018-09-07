@@ -1,9 +1,9 @@
 {
 	"host": "localhost",
 	"port": 5432,
-	"database": "my-database-name",
-	"user": "user-name",
-	"password": "user-password",
+	"database": "sattrace",
+	"user": "sattrace",
+	"password": "secret",
 	"min": 0,
 	"max": 8
 }
