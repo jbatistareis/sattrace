@@ -58,7 +58,7 @@ export class SatelliteMapComponent implements OnInit {
   }
 
   toggleMapData(tle: TLE) {
-    let index = this.findMapListIndexByTLEId(tle.id);
+    let index = this.findMapListIndexByTleId(tle.id);
     if (index >= 0) {
       this.map.removeLayer(this.mapDataList[index].path);
       this.map.removeLayer(this.mapDataList[index].marker);
@@ -110,12 +110,12 @@ export class SatelliteMapComponent implements OnInit {
     mapData.path.setLatLngs(finalCoords);
   }
 
-  findMapListIndexByTLEId(id): number {
+  findMapListIndexByTleId(id): number {
     return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id === id; })[0]);
   }
 
   updateSatelliteTle(tle: TLE) {
-    this.mapDataList[this.findMapListIndexByTLEId(tle.id)].orbitData = satellite.twoline2satrec(tle.line1, tle.line2);
+    this.mapDataList[this.findMapListIndexByTleId(tle.id)].orbitData = satellite.twoline2satrec(tle.line1, tle.line2);
   }
 
   updateSatellitePositions() {
