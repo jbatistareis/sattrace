@@ -17,7 +17,7 @@ declare var L: any;
 export class SatelliteMapComponent implements OnInit {
 
   private map: any;
-  private markerIcon = L.divIcon({ className: '', iconAnchor: [20, 35], html: '<span style="font-size: 40px;">&#x01F6F0</span>' });
+  private markerIcon = L.icon({ iconUrl: 'images/icons8-satellite-48.png', iconAnchor: [24, 24] });
   private mapDataList: MapData[] = [];
 
   constructor(private tleTrackService: TleTrackService) { }
