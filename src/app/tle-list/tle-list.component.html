@@ -4,12 +4,15 @@
     <form>
       <div class="col-12">
         <div class="row">
-          <div class="col-10">
+          <div class="col-10 input-group-sm input-group">
             <select class="custom-select custom-select-sm" name="category" [(ngModel)]="category" (change)="loadCategoryData(category)">
               <option [ngValue]="searchResults" *ngIf="searchResults">{{searchResults.name}}</option>
               <option [ngValue]="noCategory">No category</option>
               <option *ngFor="let item of categoryList" [ngValue]="item">{{item.name}}</option>
             </select>
+            <div id="catInfo" class="input-group-append" data-container="body" data-toggle="tooltip" data-placement="bottom">
+              <div class="input-group-text"><i class="fas fa-info"></i></div>
+            </div>
           </div>
           <div class="col-2">
             <div class="dropdown">
@@ -25,9 +28,9 @@
                   [hidden]="category.id === 1">
                   Edit category</a>
                 <div class="dropdown-divider"></div>
-                <a [href]="'tle/export/category/' + category.id" class="dropdown-item">Export category</a>
                 <a href="#" class="dropdown-item" data-toggle="modal" data-target="#importModal" data-backdrop="static">
                   Import into category</a>
+                <a [href]="'tle/export/category/' + category.id" class="dropdown-item">Export category</a>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item" data-toggle="modal" data-target="#tleEditModal" data-backdrop="static"
                   (click)="newTle()">
@@ -55,7 +58,7 @@
   <div class="card-footer text-muted">
     <form #searchForm="ngForm" (ngSubmit)="execSearch(search.value)">
       <div class="col-12">
-        <input type="text" maxlength="24" placeholder="Search TLE names" class="form-control form-control-sm">
+        <input type="text" maxlength="24" placeholder="Search TLE names" class="form-control form-control-sm" #search>
       </div>
     </form>
   </div>
@@ -163,12 +166,10 @@
       </div>
       <form #impForm="ngForm" (ngSubmit)="sendFile()">
         <div class="modal-body">
+          <input type="file" name="file" style="display: none;" (change)="setFile($event)" #file />
           <div class="form-group form-row">
             <label for="catName" class="col-sm-2 col-form-label">Text file</label>
-            <div class="col-sm-10">
-              <input type="file" maxlength="20" id="file" name="file" class="form-control form-control-sm" (change)="setFile($event)"
-                required />
-            </div>
+            <button class="btn btn-default btn-sm col-sm-10" (click)="file.click()">{{filename || 'Select File'}}</button>
           </div>
           <div id="uploadResult"></div>
         </div>

@@ -25,7 +25,8 @@ export class TleListComponent implements OnInit {
   public category: Category = this.noCategory;
   public formCategory: Category = new Category();
   public formTle: TLE = new TLE();
-  public search: string;
+  public search: string = undefined;
+  public filename: string = undefined;
 
   constructor(private http: HttpClient, private tleTrackService: TleTrackService) { }
 
@@ -34,8 +35,13 @@ export class TleListComponent implements OnInit {
     this.loadCategoryData(this.noCategory);
 
     $('[data-toggle=popover]').popover();
+    $('[data-toggle="tooltip"]').tooltip();
     $('div#categoryEditModal').on('show.bs.modal', (event) => { this.confirmDelete = false; });
     $('div#tleEditModal').on('show.bs.modal', (event) => { this.confirmDelete = false; });
+    $('div#importModal').on('show.bs.modal', (event) => {
+      this.filename = undefined;
+      $('div#uploadResult').html('');
+    });
   }
 
   // categories
@@ -79,6 +85,7 @@ export class TleListComponent implements OnInit {
   loadCategoryData(category: Category) {
     this.getTle(category.id);
     this.formCategory = category;
+    $('div#catInfo').attr('data-original-title', category.description || 'No description');
   }
 
   // tle
@@ -141,6 +148,7 @@ export class TleListComponent implements OnInit {
 
   // upload
   setFile(event) {
+    this.filename = event.target.files[0].name;
     this.importFile = event.target.files[0];
   }
 

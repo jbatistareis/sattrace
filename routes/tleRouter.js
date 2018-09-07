@@ -67,28 +67,28 @@ router.post('/search', function (req, res, next) {
 // import tle list
 router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('file'), function (req, res, next) {
   let tles = [];
-  let textData = '';
-  textData += req.file.buffer;
-  textData = textData.split(/\r?\n/);
+  let textData = ('' + req.file.buffer).split(/\r?\n/);
 
   try {
     for (let i = 0; i < textData.length; i += 3) {
-      if (textData[i].match(/^0 /))
-        textData[i] = textData[i].substring(2);
+      if (textData[i].match(/[^A-Za-z0-9]/)) {
+        if (textData[i].match(/^0 /))
+          textData[i] = textData[i].substring(2);
 
-      if (textData[i].trim().length > 24)
-        throw 'Error in line ' + (i + 1) + ': Name field length incorrect. Found ' + textData[i].trim().length + ', maximum is 24';
+        if (textData[i].trim().length > 24)
+          throw 'Error in line ' + (i + 1) + ': Name field length incorrect. Found ' + textData[i].trim().length + ', maximum is 24';
 
-      if (textData[i + 1].trim().length != 69)
-        throw 'Error in line ' + (i + 2) + ': Line 1 field length incorrect. Found ' + textData[i + 1].trim().length + ', required is 69';
+        if (textData[i + 1].trim().length != 69)
+          throw 'Error in line ' + (i + 2) + ': Line 1 field length incorrect. Found ' + textData[i + 1].trim().length + ', required is 69';
 
-      if (textData[i + 2].trim().length != 69)
-        throw 'Error in line ' + (i + 3) + ': Line 2 field length incorrect. Found ' + textData[i + 2].trim().length + ', required is 69';
+        if (textData[i + 2].trim().length != 69)
+          throw 'Error in line ' + (i + 3) + ': Line 2 field length incorrect. Found ' + textData[i + 2].trim().length + ', required is 69';
 
-      tles.push(textData[i].trim());
-      tles.push(textData[i + 1].trim());
-      tles.push(textData[i + 2].trim());
-      tles.push(req.params.id);
+        tles.push(textData[i].trim());
+        tles.push(textData[i + 1].trim());
+        tles.push(textData[i + 2].trim());
+        tles.push(req.params.id);
+      }
     }
   } catch (error) {
     res.status(500);

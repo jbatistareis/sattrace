@@ -19,6 +19,7 @@ export class SatelliteMapComponent implements OnInit {
   private map: any;
   private markerIcon = L.icon({ iconUrl: 'images/icons8-satellite-48.png', iconAnchor: [24, 24] });
   private mapDataList: MapData[] = [];
+  private manualDate: Date = undefined;
 
   constructor(private tleTrackService: TleTrackService) { }
 
@@ -41,8 +42,8 @@ export class SatelliteMapComponent implements OnInit {
     L.control.scale().addTo(this.map);
 
     // updaters
-    setInterval(() => this.updateSatellitePositions(), 2000);
-    setInterval(() => this.updatePathPositions(), 60000);
+    setInterval(() => this.updateSatellitePositions(this.manualDate || new Date()), 2000);
+    setInterval(() => this.updatePathPositions(this.manualDate || new Date()), 60000);
 
     // listeners
     this.tleTrackService.toggleTle.subscribe((tle) => this.toggleMapData(tle));
@@ -74,13 +75,12 @@ export class SatelliteMapComponent implements OnInit {
 
       this.mapDataList.push(mapData);
 
-      this.updatePathPositions();
-      this.updateSatellitePositions();
+      this.updatePathPositions(this.manualDate || new Date());
+      this.updateSatellitePositions(this.manualDate || new Date());
     }
   }
 
-  setSatellitePosition(mapData: MapData) {
-    let date = new Date();
+  setSatellitePosition(mapData: MapData, date: Date) {
     let positionAndVelocity = satellite.propagate(mapData.orbitData, date);
     let geodeticCoords = satellite.eciToGeodetic(positionAndVelocity.position, satellite.gstime(date));
 
@@ -91,9 +91,9 @@ export class SatelliteMapComponent implements OnInit {
     this.setSatelliteIformation(mapData);
   }
 
-  setSatellitePath(mapData: MapData) {
+  setSatellitePath(mapData: MapData, date: Date) {
     let finalCoords = [];
-    let coordMoment = moment();
+    let coordMoment = moment(date);
     coordMoment.subtract(1, 'hour');
 
 
@@ -110,6 +110,14 @@ export class SatelliteMapComponent implements OnInit {
     mapData.path.setLatLngs(finalCoords);
   }
 
+  setManualDate() {
+    // TODO
+  }
+
+  clearManualDate() {
+    this.manualDate = undefined;
+  }
+
   findMapListIndexByTleId(id): number {
     return this.mapDataList.indexOf(this.mapDataList.filter((item) => { return item.id === id; })[0]);
   }
@@ -118,14 +126,14 @@ export class SatelliteMapComponent implements OnInit {
     this.mapDataList[this.findMapListIndexByTleId(tle.id)].orbitData = satellite.twoline2satrec(tle.line1, tle.line2);
   }
 
-  updateSatellitePositions() {
+  updateSatellitePositions(date: Date) {
     for (let i = 0; i < this.mapDataList.length; i++)
-      this.setSatellitePosition(this.mapDataList[i]);
+      this.setSatellitePosition(this.mapDataList[i], date);
   }
 
-  updatePathPositions() {
+  updatePathPositions(date: Date) {
     for (let i = 0; i < this.mapDataList.length; i++)
-      this.setSatellitePath(this.mapDataList[i]);
+      this.setSatellitePath(this.mapDataList[i], date);
   }
 
   setSatelliteIformation(mapData: MapData) {
