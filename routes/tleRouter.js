@@ -59,7 +59,7 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
   textData = textData.split(/\r?\n/);
 
   try {
-    for (let i = 0; i < textData.length; i++)
+    for (let i = 0; i < textData.length; i += 3)
       if (textData[i].match(/^\w/)) {
         if (textData[i].trim().length > 24)
           throw 'Error in line ' + (i + 1) + ': Name field length incorrect.Found ' + textData[i].trim().length + ', maximum is 24';
@@ -74,14 +74,16 @@ router.post('/import/:id', multer({ storage: multer.memoryStorage() }).single('f
         tles.push(textData[i + 1].trim());
         tles.push(textData[i + 2].trim());
         tles.push(req.params.id);
-        i += 2;
       }
+
+    tleModel.import(tles);
+
+    res.status(200);
+    res.render('message', { message: String.fromCodePoint(0x2714) + ' File imported' });
   } catch (error) {
     res.status(500);
-    res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: error });
+    res.render('error', { message: String.fromCodePoint(0x26A0) + ' Parse error', error: { stack: error } });
   }
-
-  tleModel.bulkSave(tles);
 });
 
 // export category

@@ -5,6 +5,7 @@ import { SatelliteMapComponent } from './satellite-map/satellite-map.component';
 import { RootComponent } from './root/root.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgHttpLoaderModule } from 'ng-http-loader';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgHttpLoaderModule
   ],
   providers: [],
   bootstrap: [RootComponent]

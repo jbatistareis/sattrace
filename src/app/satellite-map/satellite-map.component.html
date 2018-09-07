@@ -1,7 +1,7 @@
 <div class="card mt-4">
   <ul class="list-group list-group-flush">
     <li class="list-group-item">
-      <ul class="list-inline ">
+      <ul class="list-inline">
         <li class="list-inline-item" *ngFor="let item of selectedTle()">
           <a href="#" class="badge badge-secondary" [style.background]="item.color"><i class="fas fa-times" (click)="toggleTle(item)">&nbsp;</i>{{item.name}}</a>
         </li>
