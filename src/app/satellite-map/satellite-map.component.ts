@@ -64,15 +64,6 @@ export class SatelliteMapComponent implements OnInit {
     // listeners
     this.tleTrackService.toggleTle.subscribe((tle) => this.toggleMapData(tle));
     this.tleTrackService.updatedTle.subscribe((tle) => this.updateSatelliteTle(tle));
-
-    // TEST
-    this.toggleTle(
-      new TLE(
-        1,
-        'ISS (ZARYA)',
-        '1 25544U 98067A   18251.24259628  .00003015  00000-0  53336-4 0  9998',
-        '2 25544  51.6418 324.8013 0005029 133.9199 326.5031 15.53826959131434',
-        3));
   }
 
   selectedTle(): TLE[] {

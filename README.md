@@ -5,10 +5,6 @@ This is a simple satellite tracker using Two-Line Element Sets (TLE), data can b
 ![SatTrace](screenshots/main.jpg)
 
 ### Instalation  
-Clone the repository then install [Node.js](https://nodejs.org/) and [PostgreSQL](https://www.postgresql.org/).  
-After that, modify the file [database/_config.json](database/_config.json) with your connection information and then rename it to `config.json` and run the database creation script on [database.sql](database.sql) (psql -f database.sql).  
-Then finally, run `npm install` one time to download all dependencies, and `npm start` to run the server.
-
-### In progress features  
-* Manual date input
-* Change the start and finish time for the tracks
+Clone the repository, then install [Node.js](https://nodejs.org/) and [PostgreSQL](https://www.postgresql.org/).  
+After that, run the database creation script on [database.sql](database.sql) (psql -f database.sql), then modify the file [database/_config.json](database/_config.json) with your connection information and rename it to `config.json`.  
+Then finally, run `npm install` one time to download all dependencies, and `npm start` when you want to run the server.
