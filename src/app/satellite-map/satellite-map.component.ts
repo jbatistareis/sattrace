@@ -24,7 +24,6 @@ export class SatelliteMapComponent implements OnInit {
   public startAt: number = -1;
   public endAt: number = 1;
   public manualDateStr: string = undefined;
-  public manualDateDisabled: boolean = true;
 
   constructor(private tleTrackService: TleTrackService) { }
 
@@ -45,6 +44,14 @@ export class SatelliteMapComponent implements OnInit {
     });
     this.map.on('contextmenu', (event) => this.map.panTo([0, 0]));
     L.control.scale().addTo(this.map);
+
+    // setup datetime picker
+    $('#baseDatePicker').datetimepicker({
+      format: 'YYYY-MM-DD HH:mm:ss',
+      sideBySide: true,
+      ignoreReadonly: true
+    });
+    $('#baseDatePicker').on('change.datetimepicker', (event) => this.setManualDate(event.date));
 
     // updaters
     setInterval(() => {
@@ -142,16 +149,18 @@ export class SatelliteMapComponent implements OnInit {
     this.updatePathPositions();
   }
 
-  setManualDate() {
-    this.now = moment(this.manualDateStr).toDate();
+  setManualDate(dateStr: number) {
+    this.now = moment(dateStr);
 
     this.updatePathPositions();
     this.updateSatellitePositions();
   }
 
-  clearManualDate() {
-    this.manualDateDisabled = !this.manualDateDisabled;
+  resetManualDate() {
     this.now = moment();
+
+    this.updatePathPositions();
+    this.updateSatellitePositions();
   }
 
   findMapListIndexByTleId(id): number {

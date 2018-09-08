@@ -1,6 +1,6 @@
 {
   "name": "sattrace",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "ng": "ng",
@@ -41,6 +41,7 @@
     "pg-promise": "^8.4.6",
     "rxjs": "^6.0.0",
     "satellite.js": "^2.0.2",
+    "tempusdominus-bootstrap-4": "^5.0.1",
     "throng": "^4.0.0",
     "zone.js": "~0.8.26"
   },

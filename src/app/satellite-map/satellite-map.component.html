@@ -8,7 +8,7 @@
         <li class="list-inline-item">&nbsp;</li>
       </ul>
     </li>
-    <li id="map" class="list-group-item border-0"></li>
+    <li id="map" class="list-group-item border-0" style="z-index: 1;"></li>
     <li class="list-group-item border-0">
       <form class="form">
         <div class="form-row">
@@ -32,14 +32,16 @@
               <label class="input-group-text">h</label>
             </div>
           </div>
-          <div class="input-group input-group-sm col-md-6">
+          <div id="baseDatePicker" class="input-group input-group-sm date col-md-6" data-target-input="nearest">
             <div class="input-group-prepend">
               <label class="input-group-text">Base date</label>
             </div>
-            <input type="text" class="form-control" name="baseDate" placeholder="YYYY-MM-DD HH:mm" [(ngModel)]="manualDateStr"
-              disabled>
+            <input type="text" class="form-control datetimepicker-input" name="baseDate" data-target="#baseDatePicker"
+              placeholder="YYYY-MM-DD HH:mm:ss" [(ngModel)]="manualDateStr" readonly>
             <div class="input-group-append">
-              <label class="input-group-text"><i class="far fa-calendar-alt"></i></label>
+              <label class="input-group-text" data-toggle="tooltip" data-placement="bottom" title="Set to today"
+                (click)="resetManualDate()"><i class="fas fa-undo"></i></label>
+              <label class="input-group-text" data-target="#baseDatePicker" data-toggle="datetimepicker"><i class="far fa-calendar-alt"></i></label>
             </div>
           </div>
         </div>
