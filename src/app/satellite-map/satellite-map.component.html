@@ -9,5 +9,41 @@
       </ul>
     </li>
     <li id="map" class="list-group-item border-0"></li>
+    <li class="list-group-item border-0">
+      <form class="form">
+        <div class="form-row">
+          <div class="input-group input-group-sm col-md-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text">Start at</label>
+            </div>
+            <input type="number" max="-1" min="-168" class="form-control pr-0" name="startAt" [(ngModel)]="startAt"
+              (ngModelChange)="pathPeriodChange()">
+            <div class="input-group-append">
+              <label class="input-group-text">h</label>
+            </div>
+          </div>
+          <div class="input-group input-group-sm col-md-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text">End at</label>
+            </div>
+            <input type="number" min="1" max="168" class="form-control pr-0" name="endAt" [(ngModel)]="endAt"
+              (ngModelChange)="pathPeriodChange()">
+            <div class="input-group-append">
+              <label class="input-group-text">h</label>
+            </div>
+          </div>
+          <div class="input-group input-group-sm col-md-6">
+            <div class="input-group-prepend">
+              <label class="input-group-text">Base date</label>
+            </div>
+            <input type="text" class="form-control" name="baseDate" placeholder="YYYY-MM-DD HH:mm" [(ngModel)]="manualDateStr"
+              disabled>
+            <div class="input-group-append">
+              <label class="input-group-text"><i class="far fa-calendar-alt"></i></label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </li>
   </ul>
 </div>
