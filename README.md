@@ -1,5 +1,7 @@
 # SatTrace  
 ### [Live demo](https://jbatistareis.github.io/sattrace/)  
+**Path information on this demo is outdated as of 2018*  
+
 This is a simple satellite tracker using Two-Line Element Sets (TLE), data can be input manually, of via plain text files found on [Celestrak](https://www.celestrak.com/) or [Space Track](https://www.space-track.org/).  
 
 ![SatTrace](screenshots/main.jpg)
